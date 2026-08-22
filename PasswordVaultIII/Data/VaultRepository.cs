@@ -12,11 +12,9 @@ namespace PasswordVaultIII.Data
     // rather than filtered with a SQL WHERE like the old Access-backed version did.
     //
     // The actual field-encryption key (the "vault key") is a random value that never
-    // changes. It's never stored directly - instead it's wrapped (encrypted) once under
-    // a key derived from the master password, and once under a key derived from a
-    // recovery key, with each wrapped copy stored separately. That's what lets either
-    // secret independently unlock the vault, and lets the master password be reset
-    // (by rewrapping) without having to re-encrypt every stored entry.
+    // changes. It's never stored directly - instead it's wrapped (encrypted) under a
+    // key derived from the master password. There is no recovery mechanism: losing the
+    // master password means losing access to every stored entry.
     public sealed class VaultRepository
     {
         private readonly string _connectionString;
@@ -55,55 +53,24 @@ namespace PasswordVaultIII.Data
 
         public bool HasMasterPassword() => GetMeta("PasswordWrappedKey") != null;
 
-        // Generates a new random vault key, wraps it under the password and under a
-        // freshly generated recovery key, and returns the recovery key so the caller
-        // can show it to the user once.
-        public string CreateMasterPassword(string password, int iterations = VaultCrypto.DefaultIterations)
+        // Generates a new random vault key and wraps it under the password.
+        public void CreateMasterPassword(string password, int iterations = VaultCrypto.DefaultIterations)
         {
             byte[] vaultKey = RandomNumberGenerator.GetBytes(VaultCrypto.KeySize);
-
-            WrapVaultKey(vaultKey, password, iterations, "Password");
-
-            string recoveryKey = RecoveryKeyFormat.Generate();
-            WrapVaultKey(vaultKey, RecoveryKeyFormat.Normalize(recoveryKey), iterations, "Recovery");
-
+            WrapVaultKey(vaultKey, password, iterations);
             _vaultKey = vaultKey;
-            return recoveryKey;
         }
 
-        public bool TryUnlock(string password) => TryUnlockCore(password, "Password");
-
-        public bool TryUnlockWithRecoveryKey(string recoveryKey) =>
-            TryUnlockCore(RecoveryKeyFormat.Normalize(recoveryKey), "Recovery");
-
-        // Rewraps the existing vault key under a new password. Only valid once the
-        // vault has been unlocked (by either the old password or the recovery key) -
-        // it never touches the recovery key's own wrapped copy.
-        public void ResetMasterPassword(string newPassword, int iterations = VaultCrypto.DefaultIterations)
+        public bool TryUnlock(string password)
         {
-            WrapVaultKey(Key, newPassword, iterations, "Password");
-        }
-
-        private void WrapVaultKey(byte[] vaultKey, string secret, int iterations, string prefix)
-        {
-            byte[] salt = VaultCrypto.NewSalt();
-            byte[] kek = VaultCrypto.DeriveKey(secret, salt, iterations);
-            string wrapped = VaultCrypto.Encrypt(Convert.ToBase64String(vaultKey), kek);
-            SetMeta(prefix + "Salt", Convert.ToBase64String(salt));
-            SetMeta(prefix + "Iterations", iterations.ToString());
-            SetMeta(prefix + "WrappedKey", wrapped);
-        }
-
-        private bool TryUnlockCore(string secret, string prefix)
-        {
-            string saltB64 = GetMeta(prefix + "Salt");
-            string iterStr = GetMeta(prefix + "Iterations");
-            string wrapped = GetMeta(prefix + "WrappedKey");
+            string saltB64 = GetMeta("PasswordSalt");
+            string iterStr = GetMeta("PasswordIterations");
+            string wrapped = GetMeta("PasswordWrappedKey");
             if (saltB64 == null || iterStr == null || wrapped == null) return false;
 
             byte[] salt = Convert.FromBase64String(saltB64);
             int iterations = int.Parse(iterStr);
-            byte[] kek = VaultCrypto.DeriveKey(secret, salt, iterations);
+            byte[] kek = VaultCrypto.DeriveKey(password, salt, iterations);
 
             try
             {
@@ -114,6 +81,16 @@ namespace PasswordVaultIII.Data
             {
                 return false;
             }
+        }
+
+        private void WrapVaultKey(byte[] vaultKey, string password, int iterations)
+        {
+            byte[] salt = VaultCrypto.NewSalt();
+            byte[] kek = VaultCrypto.DeriveKey(password, salt, iterations);
+            string wrapped = VaultCrypto.Encrypt(Convert.ToBase64String(vaultKey), kek);
+            SetMeta("PasswordSalt", Convert.ToBase64String(salt));
+            SetMeta("PasswordIterations", iterations.ToString());
+            SetMeta("PasswordWrappedKey", wrapped);
         }
 
         private string GetMeta(string key)

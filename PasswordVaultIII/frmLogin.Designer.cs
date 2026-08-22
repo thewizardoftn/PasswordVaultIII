@@ -18,13 +18,9 @@ namespace PasswordVaultIII
             this.lblHeading = new System.Windows.Forms.Label();
             this.lblPassword = new System.Windows.Forms.Label();
             this.txtPassword = new System.Windows.Forms.TextBox();
-            this.lblRecoveryKey = new System.Windows.Forms.Label();
-            this.txtRecoveryKey = new System.Windows.Forms.TextBox();
             this.lblConfirm = new System.Windows.Forms.Label();
             this.txtConfirm = new System.Windows.Forms.TextBox();
             this.lblMessage = new System.Windows.Forms.Label();
-            this.lnkForgotPassword = new System.Windows.Forms.LinkLabel();
-            this.lnkBack = new System.Windows.Forms.LinkLabel();
             this.btnOk = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
             this.SuspendLayout();
@@ -55,24 +51,6 @@ namespace PasswordVaultIII
             this.txtPassword.Size = new System.Drawing.Size(200, 20);
             this.txtPassword.TabIndex = 2;
             //
-            // lblRecoveryKey
-            //
-            this.lblRecoveryKey.AutoSize = true;
-            this.lblRecoveryKey.Location = new System.Drawing.Point(12, 40);
-            this.lblRecoveryKey.Name = "lblRecoveryKey";
-            this.lblRecoveryKey.Size = new System.Drawing.Size(90, 13);
-            this.lblRecoveryKey.TabIndex = 8;
-            this.lblRecoveryKey.Text = "Recovery Key:";
-            this.lblRecoveryKey.Visible = false;
-            //
-            // txtRecoveryKey
-            //
-            this.txtRecoveryKey.Location = new System.Drawing.Point(120, 37);
-            this.txtRecoveryKey.Name = "txtRecoveryKey";
-            this.txtRecoveryKey.Size = new System.Drawing.Size(200, 20);
-            this.txtRecoveryKey.TabIndex = 9;
-            this.txtRecoveryKey.Visible = false;
-            //
             // lblConfirm
             //
             this.lblConfirm.AutoSize = true;
@@ -98,29 +76,6 @@ namespace PasswordVaultIII
             this.lblMessage.Name = "lblMessage";
             this.lblMessage.Size = new System.Drawing.Size(0, 13);
             this.lblMessage.TabIndex = 5;
-            //
-            // lnkForgotPassword
-            //
-            this.lnkForgotPassword.AutoSize = true;
-            this.lnkForgotPassword.Location = new System.Drawing.Point(12, 122);
-            this.lnkForgotPassword.Name = "lnkForgotPassword";
-            this.lnkForgotPassword.Size = new System.Drawing.Size(130, 13);
-            this.lnkForgotPassword.TabIndex = 10;
-            this.lnkForgotPassword.TabStop = true;
-            this.lnkForgotPassword.Text = "Forgot your master password?";
-            this.lnkForgotPassword.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lnkForgotPassword_LinkClicked);
-            //
-            // lnkBack
-            //
-            this.lnkBack.AutoSize = true;
-            this.lnkBack.Location = new System.Drawing.Point(12, 122);
-            this.lnkBack.Name = "lnkBack";
-            this.lnkBack.Size = new System.Drawing.Size(30, 13);
-            this.lnkBack.TabIndex = 11;
-            this.lnkBack.TabStop = true;
-            this.lnkBack.Text = "Back";
-            this.lnkBack.Visible = false;
-            this.lnkBack.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lnkBack_LinkClicked);
             //
             // btnOk
             //
@@ -149,15 +104,11 @@ namespace PasswordVaultIII
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(332, 184);
-            this.Controls.Add(this.lnkBack);
-            this.Controls.Add(this.lnkForgotPassword);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnOk);
             this.Controls.Add(this.lblMessage);
             this.Controls.Add(this.txtConfirm);
             this.Controls.Add(this.lblConfirm);
-            this.Controls.Add(this.txtRecoveryKey);
-            this.Controls.Add(this.lblRecoveryKey);
             this.Controls.Add(this.txtPassword);
             this.Controls.Add(this.lblPassword);
             this.Controls.Add(this.lblHeading);
@@ -176,13 +127,9 @@ namespace PasswordVaultIII
         private System.Windows.Forms.Label lblHeading;
         private System.Windows.Forms.Label lblPassword;
         private System.Windows.Forms.TextBox txtPassword;
-        private System.Windows.Forms.Label lblRecoveryKey;
-        private System.Windows.Forms.TextBox txtRecoveryKey;
         private System.Windows.Forms.Label lblConfirm;
         private System.Windows.Forms.TextBox txtConfirm;
         private System.Windows.Forms.Label lblMessage;
-        private System.Windows.Forms.LinkLabel lnkForgotPassword;
-        private System.Windows.Forms.LinkLabel lnkBack;
         private System.Windows.Forms.Button btnOk;
         private System.Windows.Forms.Button btnCancel;
     }
